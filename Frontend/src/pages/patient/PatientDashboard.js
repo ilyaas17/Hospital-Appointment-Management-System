@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 export default function PatientDashboard() {
   return (
     <div>
-    <UserNav/>
+    {/* <UserNav/> */}
     PatientDashboard</div>
   )
 }

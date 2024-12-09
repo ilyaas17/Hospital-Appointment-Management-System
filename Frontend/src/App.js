@@ -1,9 +1,9 @@
 import './App.css';
 
-import { Routes, Route, useLocation } from "react-router-dom"
+import { Routes, Route } from "react-router-dom"
 import HospitalList from './pages/patient/HospitalList';
-
-
+import { useSelector } from 'react-redux';
+import { useState, useEffect } from "react";
 import Navbar from "./components/navbar/Navbar";
 
 import HospitalDashboard from './pages/hospital/HospitalDashboard';
@@ -24,24 +24,38 @@ import AppointmentList from './pages/hospital/AppointmentList';
 
 function App() {
 
-  const location = useLocation();
+  // found Redux state
+  const hospitalIdFromStore = useSelector(
+    (state) => state.hospitalInfo.hospitalObjectId
+  );
+  const userIdFromStore = useSelector(
+    (state) => state.userInfo.userObjectId
+  );
 
-    const renderNavBar = () => {
-        if (location.pathname === '/') {
-            return <Navbar />;
-        } else if (location.pathname.startsWith('/hospitaldashboard')) {
-            return <HospitalNav />;
-        } else if (location.pathname.startsWith('/userdashboard')) {
-            return <UserNav />;
-        }
-        return null; 
-    };
+  const [hospitalObjectId, setHospitalObjectId] = useState(null);
+  const [userObjectId, setUserObjectId] = useState(null);
+
+  useEffect(() => {
+    setHospitalObjectId(hospitalIdFromStore);
+    setUserObjectId(userIdFromStore);
+  }, [hospitalIdFromStore, userIdFromStore]);
+
+
+  const renderNavBar = () => {
+    if (hospitalObjectId) {
+      return <HospitalNav />;
+    } else if (userObjectId) {
+      return <UserNav />;
+    } else {
+      return <Navbar />;
+    }
+  };
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       {/* <HospitalNav/> */}
       {/* <UserNav/> */}
-      {/* {renderNavBar()} */}
+      {renderNavBar()}
 
       <Routes>
         <Route path="/" element={<Home />} />
@@ -50,11 +64,11 @@ function App() {
         <Route path="/hospitalsignup" element={<HospitalSignup />} />
         <Route path="/hospitallogin" element={<HospitalLogin />} />
         <Route path="/hospitaldashboard" element={<HospitalDashboard />} />
-        <Route  path ="/hospital-list" element ={<HospitalList/>}/>
+        <Route path="/hospital-list" element={<HospitalList />} />
         <Route path="/patientdashboard" element={<PatientDashboard />} />
         <Route path="/bookappointment/:hospitalId/:doctorId" element={<BookAppointment />} />
-        <Route path="/hospitalpage" element={<HospitalProfile/>} />
-        <Route path="/schedule" element={<AppointmentList/>} />
+        <Route path="/hospitalpage" element={<HospitalProfile />} />
+        <Route path="/schedule" element={<AppointmentList />} />
         <Route path="/hospital/:id" element={<HospitalDetails />} />
 
       </Routes></>
